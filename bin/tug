@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+# -*- ruby -*-
+require 'rubygems'
+require 'tugboat/tug'
+
+exit Tugboat::Tug.run(ARGV)
