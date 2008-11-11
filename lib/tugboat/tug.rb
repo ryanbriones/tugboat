@@ -28,7 +28,8 @@ module Tugboat
 
     def parse(argv)
       OptionParser.new do |opts|
-        # for future use
+        opts.on('-s SOURCE_URL', '--source=SOURCE_URL') { |s| @options[:source] = s }
+        opts.on('--type SOURCE_TYPE') { |t| @options[:type] = t }
         
         opts.parse!(argv)
       end
@@ -45,12 +46,16 @@ module Tugboat
       def self.setup(tug)
         appname = tug.command_args.shift
         unless appname && !appname.empty?
-          puts "You must specific an APP_NAME: tug setup [OPTIONS] APP_NAME"
+          STDERR.puts "#{0}: You must specific an APP_NAME: tug setup [OPTIONS] APP_NAME"
           return 1
         end
 
-        tug.config.application("#{appname}")
-
+        tug.config.application("#{appname}") do |app|
+          app.class.configuration_options.each do |opt|
+            app.send("#{opt}=".to_sym, tug.options[opt]) unless tug.options[opt].nil?
+          end
+        end
+        
         app_path = "~/.tugboat/#{appname}"
         FileUtils.mkdir_p File.expand_path(app_path)
         FileUtils.mkdir %w( releases shared ).map { |dir| File.expand_path(File.join(app_path, dir)) }
@@ -58,7 +63,7 @@ module Tugboat
         File.open(File.expand_path('~/.tugboat.conf'), 'w') do |config|
           config.write tug.config.dump_configuration
         end
-        
+                
         return 0
       end
     end
