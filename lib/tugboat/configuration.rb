@@ -18,12 +18,12 @@ module Tugboat
       @singleton_configuration ||= self.new
     end
 
-    def application(appname)
+    def application(appname, create_new_application = true)
       application = nil
       
       if existing_application = self.applications.select { |a| a.name == appname }.first
         application = existing_application
-      else
+      elsif create_new_application
         new_application =  Tugboat::Application.new(appname)
         yield new_application if block_given?
         self.applications << new_application
