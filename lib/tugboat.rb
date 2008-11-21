@@ -1,6 +1,7 @@
 require 'fileutils'
 
 module Tugboat
+  class Error < RuntimeError; end
 end
 
 # Include the FileUtils file manipulation functions in the top level module,

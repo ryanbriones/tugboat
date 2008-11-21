@@ -3,6 +3,8 @@ require 'tugboat/core_ext/string'
 require 'tugboat/source/tarball'
 
 module Tugboat
+  class SourceError < Error; end
+
   module Source
     class UnsupportedTypeError < StandardError; end
     
